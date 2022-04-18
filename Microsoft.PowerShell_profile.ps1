@@ -136,12 +136,7 @@ Function Set-FileTime {
         }
     }
 }
-import-module posh-git
 
-$GitPromptSettings.DefaultPromptSuffix = '`n> '
-
-# $GitPromptSettings.DefaultPromptSuffix = "`nλ "
-# $GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
 
 
 New-Alias touch Set-FileTime
@@ -204,6 +199,9 @@ function set-case() {
     }
 }
 
+function rgrep($filespec, $pattern) {
+    Get-ChildItem -Recurse $filespec | Select-String $pattern | Select-Object -Unique Path
+}
 # setup autoenv
 Import-Module ps-autoenv
 
@@ -219,6 +217,24 @@ function dev-here($lang, $port = 8000) {
     }
     $msg = $lang + ' opening port ' + $port + ' running ' + $args
     echo $msg
-    echo "docker run --rm -it -p ${port}:${port} -v ${PWD}:/code $lang $args"
-    docker run --rm -it -p ${port}:${port} -v ${PWD}:/code $lang $args
+    echo "docker run --rm -it -e USER=dev -p ${port}:${port} -v ${PWD}:/code --network="host" $lang $args"
+    docker run --rm -it -e USER=dev -p ${port}:${port} -v ${PWD}:/code --network="host" $lang $args 
 }
+
+# import-module posh-git
+# Import-Module oh-my-posh
+
+# $GitPromptSettings.DefaultPromptSuffix = '`n> '
+# # $GitPromptSettings.DefaultPromptSuffix = "`nλ "
+# # $GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
+
+# #Set-Theme Paradox
+# #Set-Theme Honukai
+# Set-Theme Powerlevel10k-Lean
+# $ThemeSettings.DoubleCommandLine = 1
+
+# $env:path += ";C:\Users\jeff\AppData\Local\Programs\Microsoft VS Code"
+$env:path += ";C:\Users\jeff\scoop\shims"
+
+Invoke-Expression (&starship init powershell)
+
