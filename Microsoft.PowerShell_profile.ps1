@@ -59,10 +59,10 @@ function tail($path, $lines = 10) {
 
 function count($path, $recurse = 'false') {
     if ($recurse -eq 'true' -Or $recurse -eq '-r') {
-        Get-ChildItem -File $path | Measure-Object | % { $_.Count }
+        Get-ChildItem -File $path | Measure-Object | ForEach-Object { $_.Count }
     }
     else {
-        Get-ChildItem -Recurse $path | Measure-Object | % { $_.Count }
+        Get-ChildItem -Recurse $path | Measure-Object | ForEach-Object { $_.Count }
     }
 }
 Function Set-FileTime {
@@ -141,7 +141,7 @@ Function Set-FileTime {
 
 New-Alias touch Set-FileTime
 # New-Alias which Get-Command
-function which($cmd) { get-command $cmd | select path }
+function which($cmd) { get-command $cmd | Select-Object path }
 
 # Setup miniconda stuff
 # $Env:CONDA_EXE = "C:/Users/JLINDHOLM/AppData/Local/Continuum/miniconda3\Scripts\conda.exe"
@@ -207,17 +207,17 @@ Import-Module ps-autoenv
 
 function dev-here($lang, $port = 8000) {
     if ($lang -eq '') {
-        echo 'usage is dev-here <container name>'
+        Write-Output 'usage is dev-here <container name>'
         return
     }
-    $args = 'bash'
+    $arguments = 'bash'
     if ($lang -eq 'python') {
-        $args = "bash"
-        # $args = "bash -c 'cd code && pip install -r requirements.txt && bash'"
+        $arguments = "bash"
+        # $arguments = "bash -c 'cd code && pip install -r requirements.txt && bash'"
     }
-    $msg = $lang + ' opening port ' + $port + ' running ' + $args
-    echo $msg
-    echo "docker run --rm -it -e USER=dev -p ${port}:${port} -v ${PWD}:/code --network="host" $lang $args"
+    $msg = $lang + ' opening port ' + $port + ' running ' + $arguments
+    Write-Output $msg
+    Write-Output "docker run --rm -it -e USER=dev -p ${port}:${port} -v ${PWD}:/code --network="host" $lang $args"
     docker run --rm -it -e USER=dev -p ${port}:${port} -v ${PWD}:/code --network="host" $lang $args 
 }
 
